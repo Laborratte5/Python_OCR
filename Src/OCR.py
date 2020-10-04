@@ -31,6 +31,8 @@ def ocr(path):
     return text
 
 
+# See https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-just-5-minutes/
+
 # Transform and crop image
 def scan_img(file):
     # Edge detection
@@ -66,23 +68,19 @@ def scan_img(file):
             break
     # show the contour (outline) of the piece of paper
     if screenCnt is not None:
-        cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
-
-    # apply the four point transform to obtain a top-down
-    # view of the original image
+        #cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
+        # apply the four point transform to obtain a top-down
+        # view of the original image
         warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
-    # convert the warped image to grayscale, then threshold it
-    # to give it that 'black and white' paper effect
+        # convert the warped image to grayscale, then threshold it
+        # to give it that 'black and white' paper effect
         warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
-    # TODO threshold_local for better color correction
-  #  T = threshold_local(warped, 11, offset=10, method="gaussian")
-  #  warped = (warped > T).astype("uint8") * 255
-    # show the original and scanned images
-#        cv2.imshow("Original", imutils.resize(orig, height=650))
-#        cv2.imshow("Scanned", imutils.resize(warped, height=650))
-#        cv2.waitKey(0)
+        # TODO threshold_local for better color correction
+        #  T = threshold_local(warped, 11, offset=10, method="gaussian")
+        #  warped = (warped > T).astype("uint8") * 255
+        return warped
 
-    return edged
+    return image
 
 
 def four_point_transform(image, pts):
