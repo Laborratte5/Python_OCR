@@ -1,5 +1,5 @@
 import os
-from OCR import ocr
+from OCR import get_text_from_img
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
@@ -35,7 +35,7 @@ def upload():
             filename = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
             file.save(filename)
 
-            extracted_text = ocr(filename)
+            extracted_text = get_text_from_img(filename)
 
             return render_template('upload.html',
                                    msg='Successfully processed',

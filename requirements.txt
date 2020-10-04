@@ -1,4 +1,7 @@
+flask
+werkzeug
 Pillow
 pytesseract
 numpy
 opencv-python
+imutils
