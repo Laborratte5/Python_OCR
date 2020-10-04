@@ -9,14 +9,17 @@ app.template_folder = os.path.join(app.instance_path, 'template')
 UPLOAD_FOLDER = os.path.join(app.instance_path, 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route('/')
 def home_page():
     return "Hello World!"
+
 
 @app.route('/Upload', methods=['GET', 'POST'])
 def upload():
