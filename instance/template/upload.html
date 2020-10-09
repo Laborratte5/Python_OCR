@@ -4,7 +4,6 @@
     <title>Upload Image</title>
 </head>
 <body>
-
     {% if msg %}
     <h1>{{ msg }}</h1>
     {% endif %}
@@ -31,11 +30,30 @@
     <img src="{{ img_src }}">
     {% endif %}
 
-    {% if extracted_text %}
-    <p> The extracted text from the image above is: <b> {{ extracted_text }} </b></p>
 
-    {% else %}
-    The extracted text will be displayed here
-    {% endif %}
+    <input type="range" min="1" max="100" value="50" class="slider" id="slider">
+    <p id="extracted_text"></p>
+
 </body>
+   <script>
+        const data = [ {{ extracted_text |safe }} ];
+        var slider = document.getElementById('slider');
+        var text_element = document.getElementById('extracted_text');
+
+        slider.onchange = function() {
+            var slider_value = slider.value;
+
+            if (data.length == 0) {
+                text_element.innerHTML = 'The extracted text will be displayed here.';
+                slider.style = 'display: none;'
+            } else {
+                text_element.innerHTML = 'The extracted text is: <br>';
+                for (var i = 0; i < data.length * (slider_value / 100); i++) {
+                    text_element.innerHTML += data[i] + '<br>';
+                }
+            }
+        }
+
+        slider.onchange();
+    </script>
 </html>
