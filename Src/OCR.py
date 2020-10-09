@@ -1,7 +1,7 @@
 from PIL import Image
 import pytesseract
 import imutils
-#from skimage.filters import threshold_local
+from skimage.filters import threshold_local
 
 import numpy as np
 import cv2
@@ -9,12 +9,12 @@ import cv2
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
-def get_text_from_img(path):
+def get_text_from_img(path, lng):
     img = scan_img(path)
-    text = ocr(img)
+    text = ocr(img, lng)
     return text
 
-def ocr(path):
+def ocr(path, lng):
     #img = Image.open(path)
     img = path
     # norm_img = np.zeros((img.shape[0], img.shape[1]))
@@ -26,7 +26,7 @@ def ocr(path):
     # select oem --oem 1 for LSTM --oem 0 for Legacy Tesseract
     # select psm 3
 
-    text = pytesseract.image_to_string(img)
+    text = pytesseract.image_to_string(img, lng)
 
     return text
 
@@ -76,11 +76,13 @@ def scan_img(file):
         # to give it that 'black and white' paper effect
         warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
         # TODO threshold_local for better color correction
-        #  T = threshold_local(warped, 11, offset=10, method="gaussian")
-        #  warped = (warped > T).astype("uint8") * 255
+        T = threshold_local(warped, 11, offset=10, method="gaussian")
+        warped = (warped > T).astype("uint8") * 255
+        # cv2.imshow("warped", warped)
+        # cv2.waitKey()
         return warped
 
-    return image
+    return orig
 
 
 def four_point_transform(image, pts):

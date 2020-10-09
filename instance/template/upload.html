@@ -15,7 +15,16 @@
         <p>
             <input type=file name=file>
             <input type=submit value=Upload>
+
+            <select name=lng>
+                {% for lng in lngs %}
+                <option value="{{lng}}" {% if lng == eng %} selected="selected" {% endif %}>
+                {{lng}}
+                    </option>"
+                {% endfor %}
+            </select>
     </form>
+
 
     <h1>Result:</h1>
     {% if img_src %}

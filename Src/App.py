@@ -21,32 +21,36 @@ def home_page():
     return "Hello World!"
 
 
-@app.route('/Upload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    lngs = ['eng', 'deu']
     if request.method == 'POST':
 
         if 'file' not in request.files:
-            return render_template('upload.html', msg='No file selected')
+            return render_template('upload.html', lngs=lngs, msg='No file selected')
 
         file = request.files['file']
 
         if file.filename == '':
-            return render_template('upload.html', msg='No file selected')
+            return render_template('upload.html', lngs=lngs, msg='No file selected')
 
         if file and allowed_file(file.filename):
 
             filename = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
             file.save(filename)
 
-            extracted_text = get_text_from_img(filename)
+            lng = request.form['lng'] if request.form['lng'] in lngs else "eng"
+            print(lng)
+            extracted_text = get_text_from_img(filename, lng)
 
-            return render_template('upload.html',
+            return render_template('upload.html', 
+                                   lngs=lngs,
                                    msg='Successfully processed',
                                    extracted_text=extracted_text,
                                    img_src=filename)
 
     elif request.method == 'GET':
-        return render_template('upload.html')
+        return render_template('upload.html', lngs=lngs)
 
 
 if __name__ == '__main__':
