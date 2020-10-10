@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search</title>
+</head>
+<body>
+
+    <h1>Search</h1>
+
+    <p>Your Search resulted in These Findings:</p>
+
+    {% for res in results %}
+    <p>{{ res[1] }}</p>
+    <img src="{{ res[0] }}">
+    {% endfor %}
+
+</body>
+</html>

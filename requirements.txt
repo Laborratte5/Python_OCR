@@ -1,7 +1,8 @@
 flask
+nltk
 werkzeug
-Pillow
 pytesseract
 numpy
 opencv-python
 imutils
+skimage=0.16

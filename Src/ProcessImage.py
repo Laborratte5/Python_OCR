@@ -54,16 +54,14 @@ def ProcessImage(filename, lng):
 
     with open(CSV_File, "a", encoding="utf-8") as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=Defines.csv_delimiter)
-        csv_writer.writerow([ csvfilename, *keywords ])
+        csv_writer.writerow([ csvfilename + extension, *keywords ])
 
     CleanCSVFile()
 
-    textfilename = csvfilename + ".txt"
-    with open(textfilename, "w", encoding="utf-8") as f:
+    with open(csvfilename + ".txt", "w", encoding="utf-8") as f:
         f.write(extracted_text)
     
-    summfilename = csvfilename + ".summ"
-    with open(summfilename, "w", encoding="utf-8") as f:
+    with open(csvfilename + ".summ", "w", encoding="utf-8") as f:
         for sentence, _ in summary:
             f.write(sentence + "\n")
     
