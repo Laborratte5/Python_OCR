@@ -1,56 +1,51 @@
 import os
-from OCR import get_text_from_img
+import Upload
+import Defines
+import ProcessImage
 from flask import Flask, render_template, request
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.template_folder = os.path.join(app.instance_path, 'template')
 
-UPLOAD_FOLDER = os.path.join(app.instance_path, 'uploads')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
+ProcessImage.InitProcessImage(app.instance_path)
+Upload.InitUpload(app.instance_path)
 
 @app.route('/')
 def home_page():
-    return "Hello World!"
+    return render_template('index.html')
 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    lngs = ['eng', 'deu']
     if request.method == 'POST':
 
         if 'file' not in request.files:
-            return render_template('upload.html', lngs=lngs, msg='No file selected')
+            return render_template('upload.html', lngs=Defines.lngs, msg='No file selected')
 
-        file = request.files['file']
+        filename = Upload.Upload( request.files['file'] )
 
-        if file.filename == '':
-            return render_template('upload.html', lngs=lngs, msg='No file selected')
+        if filename == '':
+            return render_template('upload.html', lngs=Defines.lngs, msg='No file selected')
 
-        if file and allowed_file(file.filename):
+        extracted_text, summary, threshold = ProcessImage.ProcessImage(filename, request.form['lng'])
 
-            filename = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
-            file.save(filename)
+        # TODO Correct mapping on slider by interpolating between min and max value based on slider value
+        # TODO Update Requirements
+        # TODO Tesseract does not work with Deu selected, idk why
 
-            lng = request.form['lng'] if request.form['lng'] in lngs else "eng"
-            print(lng)
-            extracted_text = get_text_from_img(filename, lng)
+        render_text = '\n'
+        for sentence, value in summary:
+            render_text += '[`' + sentence + '`,' + str(value) + '],\n'
 
-            return render_template('upload.html', 
-                                   lngs=lngs,
-                                   msg='Successfully processed',
-                                   extracted_text=extracted_text,
-                                   img_src=filename)
+        return render_template('upload.html', 
+                                lngs=Defines.lngs,
+                                msg='Successfully processed',
+                                threshold=threshold,
+                                extracted_text=render_text,
+                                img_src=filename)
 
     elif request.method == 'GET':
-        return render_template('upload.html', lngs=lngs)
+        return render_template('upload.html', lngs=Defines.lngs)
 
 
 if __name__ == '__main__':

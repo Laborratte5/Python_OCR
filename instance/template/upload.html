@@ -36,6 +36,12 @@
 
 </body>
    <script>
+        {% if img_src %}
+        const threshold = {{ threshold }};
+        {% else %}
+        const threshold = 0;
+        {% endif %}
+
         const data = [ {{ extracted_text |safe }} ];
         var slider = document.getElementById('slider');
         var text_element = document.getElementById('extracted_text');
@@ -48,8 +54,9 @@
                 slider.style = 'display: none;'
             } else {
                 text_element.innerHTML = 'The extracted text is: <br>';
-                for (var i = 0; i < data.length * (slider_value / 100); i++) {
-                    text_element.innerHTML += data[i] + '<br>';
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i][1] >= threshold * ( 1 - (slider_value / 100)))
+                        text_element.innerHTML += data[i][0] + '<br>';
                 }
             }
         }
